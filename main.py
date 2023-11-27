@@ -49,7 +49,7 @@ async def register_user(user: UserRegistration, authenticate: TokenData = Depend
             detail="You don't have permission to register new users",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    return await user_registration(user)
+    return user_registration(user)
 
 
 # Obtain N number of questions from OpenAI
@@ -60,4 +60,4 @@ async def register_user(user: UserRegistration, authenticate: TokenData = Depend
     response_model=Questionnaire
 )
 async def generate_questions(number: StatementInput, authenticate: TokenData = Depends(user_authentication)):
-    return await generate_questions_openai(number)
+    return generate_questions_openai(number)
