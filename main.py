@@ -60,4 +60,4 @@ async def register_user(user: UserRegistration, authenticate: TokenData = Depend
     response_model=Questionnaire
 )
 async def generate_questions(number: StatementInput, authenticate: TokenData = Depends(user_authentication)):
-    return generate_questions_openai(number)
+    return await generate_questions_openai(number)
