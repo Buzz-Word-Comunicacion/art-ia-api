@@ -13,3 +13,4 @@ asyncer
 filetype
 gradio
 watchdog
+openai

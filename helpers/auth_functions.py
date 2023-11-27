@@ -4,9 +4,9 @@ from jose import jwt, JWTError
 from datetime import datetime, timedelta
 import bcrypt
 import configparser
+import json
 
-from models.validations import Token, TokenData, User, UserRegistration, UserRegistrationResponse
-from models.models import Users, hash_password
+from models.validations import Token, TokenData, User, UserRegistration
 
 from .db import search_user, new_user
 
@@ -48,7 +48,7 @@ def validate_user_login(username: str, password: str) -> Token:
         )
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
-        data={"sub": user.username}, expires_delta=access_token_expires
+        data={"sub": user.username, "sub_r": user.role}, expires_delta=access_token_expires
     )
     responseJSON = Token(
         access_token=access_token,
@@ -68,20 +68,10 @@ def user_authentication(token: str = Depends(oauth2_scheme)):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("sub")
+        role: int = payload.get("sub_r")
         if username is None:
             raise credentials_exception
-        token_data = TokenData(username=username)
+        token_data = TokenData(username=username, role=role)
     except JWTError:
         raise credentials_exception
     return token_data
-
-# Function to create a new user (non admin user)
-def user_registration(user: UserRegistration = Depends(oauth2_scheme)):
-    try:
-        new_user_reg = new_user(user)
-    except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail="Error creating new user: %s" % e.orig.msg
-        )
-    return new_user_reg

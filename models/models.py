@@ -9,7 +9,7 @@ class Users(Base):
 
     idUser = Column(Integer, primary_key=True)
     name = Column(String(length=100))
-    email = Column(String(length=255))
+    email = Column(String(length=255))  
     username = Column(String(length=255), unique=True)
     password = Column(Text)
     active = Column(Boolean, default=True)
@@ -24,3 +24,15 @@ class Roles(Base):
     idRole = Column(Integer, primary_key=True)
     name = Column(String(length=100))
     description = Column(String(length=255))
+
+
+class Statements(Base):
+    __tablename__ = 'tb_statements'
+
+    idStatement = Column(Integer, primary_key=True)
+    statement = Column(Text)
+    answer1 = Column(Text)
+    answer2 = Column(Text)
+    answer3 = Column(Text)
+    correct = Column(Integer)
+    category = Column(String(length=255))

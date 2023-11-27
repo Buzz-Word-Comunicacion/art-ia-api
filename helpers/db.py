@@ -2,10 +2,11 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy_utils import database_exists, create_database
 from contextlib import contextmanager
+import json
 import configparser
 
-from models.models import Base, Users, hash_password        # database models
-from models.validations import UserRegistration, UserRegistrationResponse, User
+from models.models import Base, Users, hash_password, Statements
+from models.validations import UserRegistration, UserRegistrationResponse, User, Questionnaire
 
 config = configparser.ConfigParser()
 config.read("config.ini")
@@ -50,11 +51,13 @@ with session_scope() as session:
         session.add_all([base_user])
         session.commit()
 
-# =============================================================================
-# REGION USER OPERATIONS
-# =============================================================================
+## ###################### ##
+## REGION USER OPERATIONS ##
+## ###################### ##
 
 # Search for a user in the database by username
+
+
 def search_user(username):
     with session_scope() as session:
         user = session.query(Users).filter(
@@ -62,18 +65,22 @@ def search_user(username):
         return user
 
 # Search for a user no passwd in User validation schema
+
+
 def search_user_schema(username):
     with session_scope() as session:
         user = session.query(Users).filter(
             Users.username == username).first()
         return User(
-            idUser=user.idUser, 
+            idUser=user.idUser,
             name=user.name,
             username=user.username,
             email=user.email
         )
 
 # Creare new user in the database
+
+
 def new_user(user: UserRegistration):
     with session_scope() as session:
         new_user_data = Users(
@@ -86,3 +93,26 @@ def new_user(user: UserRegistration):
             message="User created successfully",
             user_data=search_user_schema(user.username)
         )
+
+
+## ##################### ##
+## REGION GAME FUNCTIONS ##
+## ##################### ##
+
+# Save questions into table
+def save_questions(questions: Questionnaire):
+    # print(questions)
+    with session_scope() as session:
+        for question in questions['questions']:
+            print(question)
+            new_question = Statements(
+                statement=question['statement'],
+                answer1=question['answer1'],
+                answer2=question['answer2'],
+                answer3=question['answer3'],
+                correct=question['correct'],
+                category=question['category']
+            )
+            session.add_all([new_question])
+        session.commit()
+        return "Questions saved successfully"
