@@ -5,8 +5,8 @@ from contextlib import contextmanager
 import json
 import configparser
 
-from models.models import Base, Users, hash_password, Statements
-from models.validations import UserRegistration, UserRegistrationResponse, User, Questionnaire
+from models.models import Base, Users, hash_password, Statements, UserRankResults
+from models.validations import UserRegistration, UserRegistrationResponse, User, Questionnaire, QuestionnaireResults
 
 config = configparser.ConfigParser()
 config.read("config.ini")
@@ -111,8 +111,24 @@ def save_questions(questions: Questionnaire):
                 answer2=question['answer2'],
                 answer3=question['answer3'],
                 correct=question['correct'],
-                category=question['category']
+                category=question['category'],
+                lection=question['lection']
             )
             session.add_all([new_question])
         session.commit()
         return "Questions saved successfully"
+
+# Save user rank into table
+def save_user_rank(results: QuestionnaireResults):
+    with session_scope() as session:
+        new_user_rank = UserRankResults(
+            userid=results['userid'],
+            category=results['category'],
+            total_questions=results['total_questions'],
+            correct_answers=results['correct_answers'],
+            incorrect_answers=results['incorrect_answers'],
+            percentage_correct=results['percentage_correct']
+        )
+        session.add_all([new_user_rank])
+        session.commit()
+        return "User rank saved successfully"

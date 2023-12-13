@@ -36,6 +36,21 @@ class Question(BaseModel):
     answer3: constr(min_length=1)
     correct: conint(ge=1, le=3)
     category: constr(min_length=1)
+    lection: constr(min_length=1)
 
 class Questionnaire(BaseModel):
     questions: list[Question]
+
+class QuestionnaireResults(BaseModel):
+    userid: str
+    category: str
+    total_questions: int
+    correct_answers: int
+    incorrect_answers: int
+    percentage_correct: float
+
+class QuestionnaireResultsList(BaseModel):
+    results: list[QuestionnaireResults]
+
+class GeneralResponse(BaseModel):
+    message: str

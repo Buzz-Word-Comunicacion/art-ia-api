@@ -4,9 +4,9 @@ from openai import OpenAI
 import json
 import configparser
 
-from models.validations import StatementInput, Questionnaire
+from models.validations import StatementInput, Questionnaire, QuestionnaireResultsList
 
-from .db import save_questions
+from .db import save_questions, save_user_rank
 
 # OAuth2 password bearer scheme
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -31,7 +31,8 @@ Genera XXXNUMEROPREGUNTASXXX preguntas de educación financiera en la siguiente 
       "answer2": "Opción de respuesta 2",
       "answer3": "Opción de respuesta 3",
       "correct": "Número de la respuesta correcta (1, 2, o 3)",
-      "category": "Identificador de la categoría de la pregunta"
+      "category": "Identificador de la categoría de la pregunta",
+      "lection": "texto largo, de almenos 100 palabras sobre el que se esta haciendo la pregunta"
     }
   ]
 }
@@ -68,3 +69,18 @@ async def generate_questions_openai(num_of_questions: StatementInput = Depends(o
         )
 
     return json.loads(response_message)
+
+
+async def user_rank(user_rank: QuestionnaireResultsList = Depends(oauth2_scheme)):
+    # Save user rank into database
+    for i in user_rank.results:
+      print(i)
+    # try:
+    #   xx = save_questions(user_rank)
+    # except Exception as e:
+    #     raise HTTPException(
+    #         status_code=500,
+    #         detail="Error saving user rank into database: %s" % e
+    #     )
+
+    return 1

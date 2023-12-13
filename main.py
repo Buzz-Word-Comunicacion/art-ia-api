@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 
-from models.validations import Token, TokenData, User, UserRegistration, UserRegistrationResponse, Questionnaire, StatementInput
+from models.validations import Token, TokenData, User, UserRegistration, UserRegistrationResponse, Questionnaire, StatementInput, GeneralResponse, QuestionnaireResultsList
 from helpers import validate_user_login, user_authentication, user_registration, generate_questions_openai
 
 # Create FastAPI instance
@@ -61,3 +61,13 @@ async def register_user(user: UserRegistration, authenticate: TokenData = Depend
 )
 async def generate_questions(number: StatementInput, authenticate: TokenData = Depends(user_authentication)):
     return await generate_questions_openai(number)
+
+# Save user ranking
+@app.post(
+    "/ai/users-rank",
+    tags=["Game ranking"],
+    summary="Save user ranking from financial statements game",
+    response_model=GeneralResponse
+)
+async def save_user_ranking(rank: QuestionnaireResultsList, authenticate: TokenData = Depends(user_authentication)):
+    return user_rank(rank)

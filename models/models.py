@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, Boolean
+from sqlalchemy import Column, Integer, String, Text, Boolean, Float
 from sqlalchemy.ext.declarative import declarative_base
 import bcrypt
 
@@ -36,3 +36,16 @@ class Statements(Base):
     answer3 = Column(Text)
     correct = Column(Integer)
     category = Column(String(length=255))
+    lection = Column(Text)
+
+
+class UserRankResults(Base):
+    __tablename__ = 'tb_user_rank_results'
+
+    idUserRankResult = Column(Integer, primary_key=True)
+    userid = Column(Integer)
+    category = Column(String(length=255))
+    total_questions = Column(Integer)
+    correct_answers = Column(Integer)
+    incorrect_answers = Column(Integer)
+    percentage_correct = Column(Float)
