@@ -6,7 +6,7 @@ import configparser
 
 from models.validations import StatementInput, Questionnaire, QuestionnaireResultsList
 
-from .db import save_questions, save_user_rank
+from .db import save_questions, save_user_rank, get_questions
 
 # OAuth2 password bearer scheme
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -70,6 +70,16 @@ async def generate_questions_openai(num_of_questions: StatementInput = Depends(o
 
     return json.loads(response_message)
 
+async def get_questions_from_db(num_of_questions: StatementInput = Depends(oauth2_scheme)):
+    try:
+      results = get_questions(num_of_questions.number_of_questions)
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail="Error getting questions from database: %s" % e
+        )
+    questions = {"questions": json.loads(results)}
+    return questions
 
 async def user_rank(user_rank: QuestionnaireResultsList = Depends(oauth2_scheme)):
     # Save user rank into database

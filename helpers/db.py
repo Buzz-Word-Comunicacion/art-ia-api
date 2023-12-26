@@ -1,7 +1,8 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, class_mapper
 from sqlalchemy_utils import database_exists, create_database
 from contextlib import contextmanager
+import sqlalchemy as sa
 import json
 import configparser
 
@@ -117,6 +118,20 @@ def save_questions(questions: Questionnaire):
             session.add_all([new_question])
         session.commit()
         return "Questions saved successfully"
+
+# Get questions from table
+def get_questions(num_of_questions):
+    with session_scope() as session:
+        questions = session.query(Statements).order_by(sa.func.random()).limit(num_of_questions).all()
+
+        # Convert each SQLAlchemy object to a dictionary
+        questions_dict_list = [question.as_dict() for question in questions]
+
+        # Convert the list of dictionaries to JSON
+        questions_json = json.dumps(questions_dict_list)
+
+
+        return questions_json
 
 # Save user rank into table
 def save_user_rank(results: QuestionnaireResults):

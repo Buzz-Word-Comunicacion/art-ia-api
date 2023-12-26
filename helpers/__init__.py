@@ -1,3 +1,3 @@
 from .auth_functions import validate_user_login, user_authentication
 from .user_functions import user_registration
-from .game_functions import generate_questions_openai, user_rank
+from .game_functions import generate_questions_openai, user_rank, get_questions_from_db

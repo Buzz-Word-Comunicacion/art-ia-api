@@ -38,6 +38,9 @@ class Statements(Base):
     category = Column(String(length=255))
     lection = Column(Text)
 
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 
 class UserRankResults(Base):
     __tablename__ = 'tb_user_rank_results'
